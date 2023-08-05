@@ -1,26 +1,4 @@
 
-	/* Add "https://api.ipify.org?format=json" statement
-			this will communicate with the ipify servers in
-			order to retrieve the IP address $.getJSON will
-			load JSON-encoded data from the server using a
-			GET HTTP request */
-
-// async function getData (){
-//     let IPAddress;
-
-			 
-
-//     //This api call is for IP Address
-//     $.getJSON("https://api.ipify.org?format=json", function (data) {
-//     IPAddress = data.ip;
-//     // console.log(IPAddress)
-//     document.getElementById("user-ip").innerHTML = IPAddress
-   
-   
-
-//   });
-// }
-
 
 async function getData() {
     let IPAddress;
@@ -46,7 +24,10 @@ async function getData() {
     document.getElementById("Zone").innerText = geoinfo.timezone;
     document.getElementById("date").innerText = geoinfo.timezone;
     document.getElementById("pincode").innerText = geoinfo.postal;
-	
+    document.getElementById("hostname").innerText = geoinfo.ip;
+    // const ipLabel = document.getElementById("getip")
+    // console.log(ipLabel)
+
     
 
     showMap(geoinfo.loc)
