@@ -3,18 +3,25 @@
 async function getData() {
     let IPAddress;
 
-    // This API call is for getting the user's IP address
-    $.getJSON("https://api.ipify.org?format=json", function (data) {
-        IPAddress = data.ip;
-        document.getElementById("user-ip").innerHTML = IPAddress;
-        console.log(IPAddress)
+    // // This API call is for getting the user's IP address
+    // $.getJSON("https://api.ipify.org?format=json", function (data) {
+    //     IPAddress = data.ip;
+    //     document.getElementById("user-ip").innerHTML = IPAddress;
+    //     console.log(IPAddress)
 
         
-    });
+    // });
+
+    IPAddress = await fetch(`https://api.ipify.org?format=json`);
+    IPAddress = await IPAddress.json();
+    IPAddress = IPAddress.ip
+    console.log(IPAddress)
+            document.getElementById("user-ip").innerHTML = IPAddress;
 
   //  const response = await fetch(`https://ipinfo.io/103.198.173.228/geo`)
-    const response = await fetch(`https://ipinfo.io/103.198.173.228?token=30dd7efacbc702`)
+    const response = await fetch(`https://ipinfo.io/${IPAddress}?token=30dd7efacbc702`)
     const geoinfo = await response.json()
+    console.log(geoinfo)
 
     document.getElementById("timezone").innerText = geoinfo.timezone;
     document.getElementById("city").innerText = geoinfo.city;
