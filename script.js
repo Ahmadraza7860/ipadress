@@ -1,79 +1,69 @@
-
-
 async function getData() {
-    let IPAddress;
+    try {
+        // Fetch the user's IP address using ipify.org client-side API
+        const ipResponse = await fetch('https://api.ipify.org?format=json');
+        const ipData = await ipResponse.json();
+        const userIP = ipData.ip;
+        document.getElementById("user-ip").innerText = userIP;
 
-    // // This API call is for getting the user's IP address
-    // $.getJSON("https://api.ipify.org?format=json", function (data) {
-    //     IPAddress = data.ip;
-    //     document.getElementById("user-ip").innerHTML = IPAddress;
-    //     console.log(IPAddress)
+        // Fetch additional details using the user's IP address
+        const geoResponse = await fetch(`https://ipinfo.io/${userIP}/geo?token=30dd7efacbc702`);
+        const geoinfo = await geoResponse.json();
 
-        
-    // });
+        // Display the fetched information
+        document.getElementById("timezone").innerText = geoinfo.timezone;
+        document.getElementById("city").innerText = geoinfo.city;
+        document.getElementById("region").innerText = geoinfo.region;
+        document.getElementById("organization").innerText = geoinfo.org;
+        document.getElementById("hostname").innerText = geoinfo.ip;
+        document.getElementById("Zone").innerText = geoinfo.timezone;
+        document.getElementById("date").innerText = geoinfo.timezone;
+        document.getElementById("pincode").innerText = geoinfo.postal;
 
-    IPAddress = await fetch(`https://api.ipify.org?format=json`);
-    IPAddress = await IPAddress.json();
-    IPAddress = IPAddress.ip
-    console.log(IPAddress)
-            document.getElementById("user-ip").innerHTML = IPAddress;
+        // Call the function to show the map using the latitude and longitude
+        showMap(geoinfo.loc);
 
-  //  const response = await fetch(`https://ipinfo.io/103.198.173.228/geo`)
-    const response = await fetch(`https://ipinfo.io/${IPAddress}?token=30dd7efacbc702`)
-    const geoinfo = await response.json()
-    console.log(geoinfo)
+        // Fetch post offices based on the retrieved pincode
+        const postalResponse = await fetch(`https://api.postalpincode.in/pincode/${geoinfo.postal}`);
+        const postOfc = await postalResponse.json();
+        const postOffice = postOfc[0].PostOffice;
 
-    document.getElementById("timezone").innerText = geoinfo.timezone;
-    document.getElementById("city").innerText = geoinfo.city;
-    document.getElementById("region").innerText = geoinfo.region;
-    document.getElementById("oraganisation").innerText = geoinfo.org;
-    document.getElementById("hostname").innerText = geoinfo.hostname;
-    document.getElementById("Zone").innerText = geoinfo.timezone;
-    document.getElementById("date").innerText = geoinfo.timezone;
-    document.getElementById("pincode").innerText = geoinfo.postal;
-    document.getElementById("hostname").innerText = geoinfo.ip;
-    // const ipLabel = document.getElementById("getip")
-    // console.log(ipLabel)
-
-    
-
-    showMap(geoinfo.loc)
-
-    console.log(geoinfo)
-
-
-    function showMap(location) {
-        // Extracting latitude and longitude from the location string
-        var latLong = location.split(",");
-        var latitude = latLong[0];
-        var longitude = latLong[1];
-    
-        // Assuming you have a <div> with the ID "map-container" to show the map
-        var mapContainer = document.getElementById("map-container");
-        mapContainer.innerHTML = `<iframe width="100%" height="300" frameborder="0" style="border:0" src="https://maps.google.com/maps?q=${latitude},${longitude}&hl=en&z=14&output=embed"></iframe>`;
+        // Display the list of post offices
+        const postOfficesListContainer = document.getElementById("post-offices-list");
+        postOfficesListContainer.innerHTML = '';
+        postOffice.forEach(element => {
+            postOfficesListContainer.innerHTML += `
+                <li>
+                    <div>Name: ${element.Name}</div>
+                    <div>Branch Type: ${element.BranchType}</div>
+                    <div>Delivery Status: ${element.DeliveryStatus}</div>
+                    <div>District: ${element.District}</div>
+                    <div>Division: ${element.Division}</div>
+                </li>
+            `;
+        });
+    } catch (error) {
+        console.error('Error:', error);
     }
-
-
-
-    const postal = await fetch(`https://api.postalpincode.in/pincode/110001`)
-    const postOfc = await postal.json()
-    const postOffice = postOfc[0].PostOffice;
-
-
-    const postofficeslistcontainer = document.getElementById("post-offices-list");
-
-    postOffice.forEach(element => {
-        postofficeslistcontainer.innerHTML += ` <div class="card">
-                    <div>Name : ${element.Name}</div>
-                    <div>Branch Type : ${element.BranchType}</div>
-                    <div>Delivery Status : ${element.DeliveryStatus}</div>
-                    <div>District : ${element.District}</div>
-                    <div>Division : ${element.Division}</div>
-                    </div>`;
-            });
-
-
 }
 
+function showMap(location) {
+    // Extracting latitude and longitude from the location string
+    var latLong = location.split(",");
+    var latitude = latLong[0];
+    var longitude = latLong[1];
+
+    var mapContainer = document.querySelector(".map-container");
+    var iframe = document.createElement("iframe");
+    iframe.setAttribute("width", "100%");
+    iframe.setAttribute("height", "300");
+    iframe.setAttribute("frameborder", "0");
+    iframe.setAttribute("style", "border:0");
+    iframe.setAttribute("src", `https://maps.google.com/maps?q=${latitude},${longitude}&hl=en&z=14&output=embed`);
+
+    // Clear any previous content in the mapContainer and append the iframe
+    mapContainer.innerHTML = "";
+    mapContainer.appendChild(iframe);
+}
 
 getData();
