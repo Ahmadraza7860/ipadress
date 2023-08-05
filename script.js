@@ -46,7 +46,7 @@ async function getData() {
     document.getElementById("Zone").innerText = geoinfo.timezone;
     document.getElementById("date").innerText = geoinfo.timezone;
     document.getElementById("pincode").innerText = geoinfo.postal;
-	 document.getElementById("getip").innerText = geoinfo.ip;
+	
     
 
     showMap(geoinfo.loc)
